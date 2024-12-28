@@ -1,7 +1,8 @@
 import { Router } from "express";
-import { getUser } from "../controllers/user";
+import verifyAdminToken from "../middleware/verifyToken";
+import { createGroceryItem } from "../controllers/user";
 const router = Router();
 
-router.get("/", getUser);
+router.post("/grocery-items", verifyAdminToken, createGroceryItem);
 
 export default router;

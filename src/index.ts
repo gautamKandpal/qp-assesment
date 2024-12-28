@@ -1,15 +1,17 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import userRoutes from "./routes/userRoutes";
+import authRoutes from "./routes/authRoutes";
+import dotenv from "dotenv";
+dotenv.config(); //to load enviroment variables
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 5000;
 
+app.use(express.json());
+
+app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
 
-// app.get("/", (req, res) => {
-//   res.send("from git project");
-// });
-
 app.listen(port, () => {
-  console.log(`Backend is running on port: ${port}`);
+  console.log(`SERVER IS RUNNING ON PORT ${port} 🚀`);
 });
