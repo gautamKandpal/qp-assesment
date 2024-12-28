@@ -12,8 +12,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createGroceryItem = void 0;
+exports.getGroceryItem = exports.deleteGroceryItem = exports.createGroceryItem = void 0;
 const client_1 = __importDefault(require("../prisma/client"));
+// ADMIN
 const createGroceryItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, description, price } = req.body;
     try {
@@ -35,4 +36,45 @@ const createGroceryItem = (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.createGroceryItem = createGroceryItem;
+const deleteGroceryItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    try {
+        if (!id) {
+            res.status(400).json({
+                message: "ID is required to delete a grocery item",
+            });
+            return;
+        }
+        const existItem = yield client_1.default.groceryItem.findUnique({
+            where: { id: Number(id) },
+        });
+        if (!existItem) {
+            res.status(404).json({ message: "Grocery item not found" });
+            return;
+        }
+        const removedItem = yield client_1.default.groceryItem.delete({
+            where: { id: Number(id) },
+        });
+        res.status(200).json({
+            message: "Grocery item removed successfully",
+            removedItem,
+        });
+    }
+    catch (err) {
+        console.log("Failed to delete grocery item: ", err);
+        res.status(500).json({ error: "Failed to delete grocery item" });
+    }
+});
+exports.deleteGroceryItem = deleteGroceryItem;
+const getGroceryItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const items = yield client_1.default.groceryItem.findMany();
+        res.status(200).json(items);
+    }
+    catch (err) {
+        console.log("Error getting the grocery item", err);
+        res.status(500).json({ err: "failed to get the grocery item" });
+    }
+});
+exports.getGroceryItem = getGroceryItem;
 //# sourceMappingURL=user.js.map

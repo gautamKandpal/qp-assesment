@@ -8,5 +8,7 @@ const verifyToken_1 = __importDefault(require("../middleware/verifyToken"));
 const user_1 = require("../controllers/user");
 const router = (0, express_1.Router)();
 router.post("/grocery-items", verifyToken_1.default, user_1.createGroceryItem);
+router.get("/get-grocery-items", verifyToken_1.default, user_1.getGroceryItem);
+router.delete("/delete-grocery-item", verifyToken_1.default, user_1.deleteGroceryItem);
 exports.default = router;
 //# sourceMappingURL=userRoutes.js.map
