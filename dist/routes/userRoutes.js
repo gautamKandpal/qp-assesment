@@ -9,6 +9,7 @@ const user_1 = require("../controllers/user");
 const router = (0, express_1.Router)();
 router.post("/grocery-items", verifyToken_1.default, user_1.createGroceryItem);
 router.get("/get-grocery-items", verifyToken_1.default, user_1.getGroceryItem);
-router.delete("/delete-grocery-item", verifyToken_1.default, user_1.deleteGroceryItem);
+router.delete("/delete-grocery-item/:id", verifyToken_1.default, user_1.deleteGroceryItem);
+router.put("/update-grocery-item/:id", verifyToken_1.default, user_1.updateGroceryItem);
 exports.default = router;
 //# sourceMappingURL=userRoutes.js.map

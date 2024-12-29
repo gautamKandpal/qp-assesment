@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getGroceryItem = exports.deleteGroceryItem = exports.createGroceryItem = void 0;
+exports.updateGroceryItem = exports.getGroceryItem = exports.deleteGroceryItem = exports.createGroceryItem = void 0;
 const client_1 = __importDefault(require("../prisma/client"));
 // ADMIN
 const createGroceryItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -27,7 +27,7 @@ const createGroceryItem = (req, res) => __awaiter(void 0, void 0, void 0, functi
         });
         res.status(201).json({
             message: "item added sucessfully",
-            item: newItem,
+            newItem,
         });
     }
     catch (err) {
@@ -77,4 +77,40 @@ const getGroceryItem = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.getGroceryItem = getGroceryItem;
+const updateGroceryItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const { name, description, price } = req.body;
+    try {
+        if (!id) {
+            res
+                .status(400)
+                .json({ message: "ID is required to update a grocery item" });
+            return;
+        }
+        if (!name && !description && !price) {
+            res.status(400).json({
+                message: "At least one field is required to update a grocery item",
+            });
+            return;
+        }
+        const existingItem = yield client_1.default.groceryItem.findUnique({
+            where: { id: Number(id) },
+        });
+        if (!existingItem) {
+            res.status(404).json({ message: "Grocery item not found" });
+            return;
+        }
+        // update the item
+        const updatedItem = yield client_1.default.groceryItem.update({
+            where: { id: Number(id) },
+            data: Object.assign(Object.assign(Object.assign({}, (name && { name })), (description && { description })), (price && { price })),
+        });
+        res.status(200).json({ message: "Item updated sucessfully", updatedItem });
+    }
+    catch (err) {
+        console.log("Error updating the the grocery item", err);
+        res.status(500).json;
+    }
+});
+exports.updateGroceryItem = updateGroceryItem;
 //# sourceMappingURL=user.js.map
