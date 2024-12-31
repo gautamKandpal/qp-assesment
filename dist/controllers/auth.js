@@ -101,7 +101,7 @@ const signIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }, JWT_SECRET, {
             expiresIn: "5d",
         });
-        res.status(200).json({ message: "Sign-in successfully", token });
+        res.status(200).json({ message: "Sign-in successfully", token, user });
         // console.log("TOKEN:", token);
     }
     catch (err) {

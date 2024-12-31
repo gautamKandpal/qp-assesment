@@ -103,7 +103,7 @@ export const signIn: RequestHandler = async (req, res) => {
         expiresIn: "5d",
       }
     );
-    res.status(200).json({ message: "Sign-in successfully", token });
+    res.status(200).json({ message: "Sign-in successfully", token, user });
     // console.log("TOKEN:", token);
   } catch (err) {
     console.log(err);
