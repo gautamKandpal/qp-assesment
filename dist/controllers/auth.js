@@ -96,7 +96,6 @@ const signIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
         const token = jsonwebtoken_1.default.sign({
             id: user.id,
-            // email: user.email,
             role: user.role,
         }, JWT_SECRET, {
             expiresIn: "5d",

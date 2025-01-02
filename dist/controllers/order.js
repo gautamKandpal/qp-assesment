@@ -15,69 +15,55 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.createOrder = void 0;
 const client_1 = __importDefault(require("../prisma/client"));
 const createOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { userId, items, } = req.body;
+    const { userId, items } = req.body; // items: [{ groceryItemId, quantity }]
     try {
-        //filtering in the basis of userId
+        // Validate the user
         const user = yield client_1.default.user.findUnique({
             where: { id: userId },
         });
         if (!user) {
-            res.status(404).json({ message: "User not found" });
+            res.status(404).json({ error: "User not found" });
             return;
         }
-        //create the order
-        const order = yield client_1.default.order.create({
-            data: {
-                userId,
-                total: 0,
-                items: {
-                    create: items.map((item) => ({
-                        groceryItemId: item.groceryItemId,
-                        quantity: item.quantity,
-                        price: 0,
-                    })),
-                },
-            },
-        });
+        // Validate grocery items and calculate the total price
         let total = 0;
-        // iterates over the values
-        for (let item of items) {
+        const orderItems = [];
+        for (const item of items) {
             const groceryItem = yield client_1.default.groceryItem.findUnique({
                 where: { id: item.groceryItemId },
             });
             if (!groceryItem) {
-                res.status(404).json({
-                    message: `grocery item with id ${item.groceryItemId} not found`,
-                });
+                res
+                    .status(404)
+                    .json({ error: `Item with ID ${item.groceryItemId} not found` });
                 return;
             }
-            const price = groceryItem.price * item.quantity;
-            total += price;
-            yield client_1.default.orderItem.updateMany({
-                where: {
-                    orderId: order.id,
-                    groceryItemId: item.groceryItemId,
-                },
-                data: {
-                    price,
-                },
+            const itemTotalPrice = groceryItem.price * item.quantity;
+            total += itemTotalPrice;
+            orderItems.push({
+                groceryItemId: item.groceryItemId,
+                quantity: item.quantity,
+                price: groceryItem.price,
             });
         }
-        //update total price
-        yield client_1.default.order.update({
-            where: { id: order.id },
+        // Create the order
+        const order = yield client_1.default.order.create({
             data: {
-                total,
+                userId: userId,
+                total: total,
+                items: {
+                    create: orderItems, // Create related order items
+                },
+            },
+            include: {
+                items: true, // Include order items in the response
             },
         });
-        return res
-            .status(201)
-            .json({ message: "Order placed successfully", order });
-        // return;
+        res.status(201).json(order);
     }
-    catch (err) {
-        console.log("Error placing order:", err);
-        res.status(500).json({ message: "Internal server error" });
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Something went wrong" });
     }
 });
 exports.createOrder = createOrder;
