@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import prisma from "../prisma/client";
+import prisma from "../utils/client";
 
 export const createOrder: RequestHandler = async (req, res) => {
   const { userId, items } = req.body; // items: [{ groceryItemId, quantity }]

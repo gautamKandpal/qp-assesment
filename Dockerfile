@@ -10,13 +10,15 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
-# Copy the rest of the application code
-COPY src .
-COPY dist dist
-
 # Copy prisma schema for client generation
+COPY prisma ./prisma/
 RUN npx prisma generate
-# RUN npx prisma migrate deploy 
+
+# Copy the rest of the application code
+COPY . .
+
+# Build the TypeScript code
+RUN npm run build
 
 # Expose the port the app runs on
 EXPOSE 3000

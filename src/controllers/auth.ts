@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import prisma from "../prisma/client";
+import prisma from "../utils/client";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { Role } from "@prisma/client";

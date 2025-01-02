@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createOrder = void 0;
-const client_1 = __importDefault(require("../prisma/client"));
+const client_1 = __importDefault(require("../utils/client"));
 const createOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { userId, items } = req.body; // items: [{ groceryItemId, quantity }]
     try {
